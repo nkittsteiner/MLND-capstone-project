@@ -13,6 +13,10 @@ Ethereum<sup>4</sup> is a cryptocurrency that handles a technology called Ethere
 
 The idea of this project is to investigate if it's possible to predict Ethereum prices based on different machine learning algorithms and a sample dataset containing daily information about trades and network health. 
 
+Machine learning seems to be a good fit to this problems considering the quantity of features in the datasets that needs to be correlated and analysed in order of obtaining a prediction. A manual processing of all this data would be a slow and tedious process.
+
+There are several studies related to predicting fluctiations on cryptocurrencies prices<sup>7</sup> <sup>8</sup> <sup>9</sup> with different approaches and focus on specific cryptoassets like Bitcoin In general there is an application of patterns and techniques used in the stocks prediction on finance, and moving this knowledge to the cryptocurrency world.
+
 
 ### Problem Statement
 
@@ -31,7 +35,16 @@ With all this steps, it's possible to expect identify one or more approaches tha
 
 ### Metrics
 
-In the case of a regression problem the selected metric is R<sup>2</sup> which provides a measure of how well future samples are likely tho be predicted for each model. The best scores are close to 1.0 and also can be negative if the model performs worse. In the case that the R<sup>2</sup> score is 0.0, this tells that the model doesn't take in account input features and always returns the same results.
+In the case of a regression problem the selected metric is R<sup>2</sup>: 
+
+R<sup>2</sup> = 1 - (SS<sub>res</sub> / SS<sub>tot</sub>)
+
+Where:
+
+- SS<sub>res</sub> : corresponds to the residual sum of squares.
+- SS<sub>tot</sub> : is the total sum of squares.
+
+Which provides a measure of how well future samples are likely tho be predicted for each model. The best scores are close to 1.0 and also can be negative if the model performs worse. In the case that the R<sup>2</sup> score is 0.0, this tells that the model doesn't take in account input features and always returns the same results.
 
 R<sup>2</sup> it's more interesting in this context because using mean squared error doesn't give enough information if the model performs bad or worst than another.
 
@@ -40,7 +53,7 @@ R<sup>2</sup> it's more interesting in this context because using mean squared e
 
 ### Data Exploration
 
-The dataset used is a composition of different sources that has historical information of different cryptocurrencies, but in this analysis only two sets are considered (ethereum_price and ethereum_dataset) <sup>7</sup>. The fields considered on each dataset are:
+The dataset used is a composition of different sources that has historical information of different cryptocurrencies, but in this analysis only two sets are considered (ethereum_price and ethereum_dataset) <sup>10</sup>. The fields considered on each dataset are:
 
 - Ethereum Dataset (ethereum_dataset.csv):
     - Date(UTC) : Date of transaction
@@ -132,7 +145,6 @@ Gradient Boosting Regressor | -1.3588933042301603
 
 
 ## III. Methodology
-_(approx. 3-5 pages)_
 
 
 ### Data Preprocessing
@@ -247,4 +259,7 @@ Another exploration could include the use of Deep Learning or Reinforcement Lear
 4. Ethereum, “Ethereum White Paper”, https://github.com/ethereum/wiki/wiki/White-Paper
 5. Ídem nº4
 6. Ídem nº4 
-7. https://www.kaggle.com/sudalairajkumar/cryptocurrencypricehistory/home
+7. Bin Kim, Gi Kim, Wook Kim, Ho Im, Hyeong Kim, Jin Kang, Hun Kim: "Predicting Fluctuations in Cryptocurrency Transactions Based on User Comments and Replies" https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0161197
+8. McNally: "Predicting the price of Bitcoin using Machine Learning", http://trap.ncirl.ie/2496/1/seanmcnally.pdf
+9. Madan, Saluja, Zhao: "Automated Bitcoin Trading via Machine Learning Algorithms", https://pdfs.semanticscholar.org/e065/3631b4a476abf5276a264f6bbff40b132061.pdf
+10. https://www.kaggle.com/sudalairajkumar/cryptocurrencypricehistory/home
