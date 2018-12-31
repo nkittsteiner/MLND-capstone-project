@@ -117,11 +117,11 @@ eth_difficulty | 0.827023
 
 In this exploration the idea behind forecasting a variable it's part of a regression problem. It's possible to use several algorithms and techniques. Nevertheless, in the context of this investigation, the set of algorithms to use focused on resolving the problem of predicting the ETH price are:
 
-- Linear Regression: The most common and simple method when it's used to forecast a variable based on a different set of features. The set of input parameters used are <i>de facto</i> parameters
-- K-Nearest Neighbors Reggressor: Often used for clustering problems, also have application on time series analysis and financial predictors. The only parameter changed is the number of neighbors to two.
-- Random Forest Regressor: The set of parameters also are default parameters in this case.
-- Ada Boost Regressor: In the case of this algorithm, the configuration parameters are different to the default values. Specifically the base estimator is set to a decision tree regressor with max depth of 10.
-- Gradient Boosting Regressor: Has another input configuration:
+- Linear Regression: The most common and simple method when it's used to forecast a variable based on a different set of features. Linear regression basically creates a line, or an hyperplane in the case of multiple features in such way that can match roughly the features with a predicted price using previous training points. The set of input parameters used are <i>de facto</i> parameters. 
+- K-Nearest Neighbors Reggressor: Often used for clustering problems, also have application on time series analysis and financial predictors. The idea behind K-NN is to get the closests training examples based on the distance to the new point. The numbers of samples can be set constant, in this case the number of neighbors is two.
+- Random Forest Regressor: The random forest algorithm it's part of the ensemble methods that create estimators or week learners based on sub-models, combining this predictions in order to improve robustness. In the case of Random Forest algorithm each tree in the ensemble it's created and picked based on a random subsets of the features. The idea of using this technique to this problem is to look how well this randomness in picking features could improve on the regression prediction. The set of parameters also are default parameters in this case.
+- Ada Boost Regressor: It's another ensemble method which based on a sequence of week learners, make each learner check the errors of the past learner. Each learner will be punished if the points are misclassified based on a loss function, then the model combines all this weigthen models, discarding the models that has high loss on accuracy. The idea to use this supervised method is similar that in Random Forest Regressor, evaluates how well the model based on the specific parameters can beat the Linear Regression. In the case of this algorithm, the configuration parameters are different to the default values. Specifically the base estimator is set to a decision tree regressor with max depth of 10.
+- Gradient Boosting Regressor: It's another ensemble methods that has a Boosting technique similar to AdaBoost but has a differentiable loss functions. The idea of using this algorithm is similar at picking Random Forest and Ada Boost. It has another parameter configuration described next:
     - Number of estimators: 1000
     - Max depth: 4
     - Minimun sample split: 2
@@ -143,6 +143,7 @@ Random Forest Regressor: | -1.169761995372531
 Ada Boost Regressor | -1.112811356682978
 Gradient Boosting Regressor | -1.3588933042301603
 
+The R<sup>2</sup> score makes sense as a benchmark indicator of how good the model is making predictions because for instance if the model gives an score of 0.66 then there is a 34% percent of variability that still unaccounted for. If the score is negative then the model perform worst than in a simple average model. Also in this problem time and efficiency in the prediction isn't critical to take in consideration how fast the models performs. 
 
 ## III. Methodology
 
@@ -176,26 +177,69 @@ After:
 
 ### Implementation
 
-The implementation process has been done using a Jupyter notebook. All the process could be explained in two blocks: 
+A prerequisite for each model consider splitting data for training and testing. The data was separated by 70/30 for training and testing sets, but because it's a time serie, it's not recommended for the training set to be <i>peeking the future</i>, because this can produce unrealistic optimistic predictions.
 
-- Splitting data for training and testing: In this step the data was separated by 70/30 for training and testing sets, but because it's a time serie, it's not recommended for the training set to be <i>peeking the future</i>, because this can produce unrealistic optimistic predictions.
-- For each algorithm choosen (Linear Regression, K-Nearest Neighbors Reggressor, Random Forest Regressor, Ada Boost Regressor, Gradient Boosting Regressor) the tasks implemented are:
-    - Instantiate the model and set parameters (if the default values hasn't fit the needs).
-    - Fit the model using X features and y variable of the training set.
-    - Make a prediction of X features of the test set.
-    - Get R<sup>2</sup> score results predicted with the actual y<sup>^</sup> values of the test set.
-    - Make a visualization of the predicted values vs actual y<sup>^</sup> values.
+For each algorithm selected, the process of implementing a model consider this tasks:
 
+- On Linear Regression algorithm: 
+  - Create an instance of Linear Regression using Scikit-learn library.
+  - Fit the model using X features and y variable of the training set.
+  - Make a prediction using X features of the test set
+  - Get R<sup>2</sup> score results predicted with the actual y<sup>^</sup> values of the test set.
+  - Make a visualization of the predicted values vs actual y<sup>^</sup> values.
+  
+- In the case of the K-Nearest Neighbors Reggressor the steps for implementing this model was the same as Linear Regression algorithm:
+  - Create an instance of KNN Regression using Scikit-learn library, setting the number of neighbors to two (n_neighbors=2)
+  - Fit the model using X features and y variable of the training set.
+  - Make a prediction using X features of the test set
+  - Get R<sup>2</sup> score results predicted with the actual y<sup>^</sup> values of the test set.
+  - Make a visualization of the predicted values vs actual y<sup>^</sup> values.
+  - The results wasn't very intuitive compared with Linear Regression, so a manual check on parameters was performed in order to try to improve the quality of the prediction, but the algorithm doesn't improve the results as expected with the first algorithm selected.
+- In the Random Forest Regressor the steps are roughly the same as with the other two algorithms:
+  - Create an instance of Random Forest Regressor using Scikit-learn library, passing no extra parameters to the instance.
+  - Fit the model using X features and y variable of the training set.
+  - Make a prediction using X features of the test set
+  - Get R<sup>2</sup> score results predicted with the actual y<sup>^</sup> values of the test set.
+  - Make a visualization of the predicted values vs actual y<sup>^</sup> values.
+- Again with Ada Boost Regressor the steps implemented was:
+  - Create an instance of Ada Boost Regressor using Scikit-learn library, passing as configuration parameter a `base_estimator=DecisionTreeRegressor(max_depth=10)`.
+  - Fit the model using X features and y variable of the training set.
+  - Make a prediction using X features of the test set
+  - Get R<sup>2</sup> score results predicted with the actual y<sup>^</sup> values of the test set.
+  - Make a visualization of the predicted values vs actual y<sup>^</sup> values.
+- Finally, in the Gradient Boosting Regressor the steps for implementing the model was:
+  - Create an instance of Gradient Boosting Regressor using Scikit-learn library, passing as configuration parameter a `'n_estimators': 500, 'max_depth': 4, 'min_samples_split': 2,
+          'learning_rate': 0.01, 'loss': 'ls'`.
+  - Fit the model using X features and y variable of the training set.
+  - Make a prediction using X features of the test set
+  - Get R<sup>2</sup> score results predicted with the actual y<sup>^</sup> values of the test set.
+  - Make a visualization of the predicted values vs actual y<sup>^</sup> values.
 
+On of the challenges was trying to understand why the KNN, AdaBoost, GBR and Random Forest, the results was so low on the R<sup>2</sup> Score. Using different configuration doesn't improve the models predictions. This is discussed in the next section.
 
 ### Refinement
 
-In general the algorithms doesn't perform the way it was expected, with the exception of Linear Regression that performs reasonable well. There was several actions performed in order to get better predictions from the models:
+In general the algorithms doesn't perform the way it was expected, with the exception of Linear Regression that performs reasonable well. 
 
-- Parameter tunning, in general, doesn't improve too much the results.
-- Using PCA for dimesionality reduction. It helps to improve on Linear Regression but hasn't any improvement on the others algorithms.
-- Reducing test samples to 50/50. In this case all algorithms perform notoriously better but K-Nearest Neighbors Reggressor, Random Forest Regressor, Ada Boost Regressor, Gradient Boosting Regressor get a good prediction until some point in the time line. In this point to the next days, the algorithms just give a fixed prediction values.
+The approach was first try to get a better  R<sup>2</sup> score in the KNN Regressor algorithm:
 
+- Applying PCA for dimensionality reduction. The results obtained doesn't get better results on the score
+- Using grid search cross validation for obtaining best parameters performance:
+  -  `n_neighbors` from 1 to 20
+  -  `leaf_size` from 1 to 100
+  -  `weights`: `uniform` or `distance`
+  -  `algorithm`: `auto`, `ball_tree`, `kd_tree`, `brute`.
+  -  The optimal parameters setting was:
+     -  `n_neighbors`: 4
+     -  `leaf_size` 1
+     -  `weights`: `distance`
+     -  `algorithm`: `brute`
+
+    The results obtained in the score doesn't improve results significantly (from -1.90 to -1.87)
+
+In the case of Linear Regression, the refinement was using the PCA training set and compare the R<sup>2</sup> score which improve from `0.76` to `0.83` 
+
+The last refinement step was using a time series split of the training and testing data. The results are explained in the next section.
 
 ## IV. Results
 
